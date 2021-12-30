@@ -1,7 +1,8 @@
-package db
+package dataBase
 
 import (
-	"github.com/YoonBaek/ururu-server/article"
+	"fmt"
+
 	"github.com/YoonBaek/ururu-server/utils"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -12,11 +13,14 @@ var (
 	err error
 )
 
-func DB(whichDB string) *gorm.DB {
-	if db == nil {
-		db, err = gorm.Open(sqlite.Open(whichDB))
-		utils.HandleErr(err)
-	}
-	db.AutoMigrate(&article.Article{})
+func DB() *gorm.DB {
 	return db
+}
+
+func InitDataBase() {
+	db, err = gorm.Open(sqlite.Open("ururu.db"))
+	utils.HandleErr(err)
+	fmt.Println("------------------------")
+	fmt.Println("database init suceed")
+	fmt.Println("------------------------")
 }
