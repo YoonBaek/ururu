@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/YoonBaek/ururu-server/account"
 	"github.com/YoonBaek/ururu-server/article"
 	dataBase "github.com/YoonBaek/ururu-server/db"
 	"github.com/YoonBaek/ururu-server/migration"
@@ -15,5 +16,6 @@ func init() {
 func main() {
 	app := fiber.New()
 	article.Routes(app)
+	account.Routes(app)
 	app.Listen(":3000")
 }
