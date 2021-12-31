@@ -5,10 +5,12 @@ package article
 // 추후 추가 기능: weather
 type Article struct {
 	PostNo      uint   `gorm:"primaryKey" json:"post_no"`
-	CodeNo      string `json:"code_no"` //연동 게시판 추후 foreign key 적용 예정
+	Code        string `json:"code"`
 	Title       string `json:"title"`
 	Content     string `json:"content"`
 	ReportedCnt uint   `json:"reported_cnt"`
+	VoteUp      uint   `json:"vote_up"`
+	VodeDown    uint   `json:"vote_down"`
 	CreatedAt   int64  `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt   int64  `gorm:"autoUpdateTime" json:"updated_at"`
 }
