@@ -2,7 +2,7 @@ package account
 
 type User struct {
 	UserId     uint   `gorm:"primaryKey" json:"user_id"`
-	Email      string `gorm:unique; not null"`
+	Email      string `gorm:"unique;not null"`
 	password   string
 	IsVerified bool  `json:"is_verified"`
 	IsGuru     bool  `json:"is_guru"`
