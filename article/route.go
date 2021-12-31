@@ -13,4 +13,6 @@ func (u URL) getURL(path string) string {
 func Routes(app *fiber.App) {
 	app.Get(appName.getURL("/:post_no"), read)
 	app.Post(appName.getURL("/create"), create)
+	app.Put(appName.getURL("/:post_no/update"), update)
+	app.Delete(appName.getURL("/:post_no/delete"), delete)
 }
