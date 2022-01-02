@@ -20,7 +20,7 @@ func DB() *gorm.DB {
 func InitDataBase() {
 	db, err = gorm.Open(sqlite.Open("ururu.db"))
 	utils.HandleErr(err)
-	fmt.Println("------------------------")
-	fmt.Println("database init suceed")
-	fmt.Println("------------------------")
+	fmt.Println("--------------------------")
+	fmt.Println("   database init suceed   ")
+	fmt.Println("--------------------------")
 }
