@@ -12,4 +12,5 @@ func (u URL) getURL(path string) string {
 
 func Routes(app *fiber.App) {
 	app.Post(appName.getURL("/signup"), signup)
+	app.Post(appName.getURL("/login"), login)
 }
