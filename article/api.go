@@ -1,7 +1,7 @@
 package article
 
 import (
-	dataBase "github.com/YoonBaek/ururu-server/db"
+	dataBase "github.com/YoonBaek/ururu-server/database"
 
 	"github.com/gofiber/fiber/v2"
 )

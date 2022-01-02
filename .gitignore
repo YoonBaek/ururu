@@ -45,4 +45,6 @@
 # database
 *.db
 
+# key
+*.key
 
