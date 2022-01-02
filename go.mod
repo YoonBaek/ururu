@@ -3,7 +3,9 @@ module github.com/YoonBaek/ururu-server
 go 1.17
 
 require (
-	github.com/gofiber/fiber/v2 v2.23.0
+	github.com/gofiber/fiber/v2 v2.24.0
+	github.com/golang-jwt/jwt/v4 v4.2.0
+	github.com/goombaio/namegenerator v0.0.0-20181006234301-989e774b106e
 	gorm.io/driver/sqlite v1.2.6
 	gorm.io/gorm v1.22.4
 )
