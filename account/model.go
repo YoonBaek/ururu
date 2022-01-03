@@ -1,5 +1,11 @@
 package account
 
+import (
+	"time"
+
+	"github.com/goombaio/namegenerator"
+)
+
 type User struct {
 	UserId     uint   `gorm:"primaryKey" json:"user_id"`
 	Email      string `gorm:"unique;not null" json:"email"`
@@ -11,6 +17,14 @@ type User struct {
 	Starring   uint   `json:"starring"`
 	JoinedAt   int64  `gorm:"autoCreateTime" json:"joined_at"`
 	LastLogin  int64  `gorm:"autoUpdateTime" json:"last_login"`
+}
+
+func initRandomNick() string {
+	seed := time.Now().UTC().UnixNano()
+	genName := namegenerator.NewNameGenerator(seed)
+
+	name := genName.Generate()
+	return name
 }
 
 type UserAuth struct {
@@ -31,7 +45,7 @@ type userSignUpModel struct {
 	// IsEmailVerified bool   `json:"is_email_verified"` // tmp
 }
 
-func UserSignUpModel() *userSignUpModel {
+func getUserSignUpModel() *userSignUpModel {
 	u := &userSignUpModel{}
 	// u.IsEmailVerified = true
 	return u

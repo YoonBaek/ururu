@@ -2,14 +2,12 @@ package account
 
 import (
 	"errors"
-	"time"
+	"fmt"
 
 	dataBase "github.com/YoonBaek/ururu-server/database"
 	"github.com/YoonBaek/ururu-server/key"
 	"github.com/YoonBaek/ururu-server/utils"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/goombaio/namegenerator"
 )
 
 var (
@@ -23,31 +21,36 @@ type errorMessage struct {
 	ErrorMessage string `json:"error_message"`
 }
 
+// [POST] 유저로부터 회원가입을 받습니다. 기존 회원과 중복되어 있는지를 체크하고,
+// 비밀번호 확인이 일치하면 User 테이블에 새로운 계정을 생성합니다.
+// 비밀번호는 UserAuth 테이블을 통해 따로 관리합니다.
 func signup(c *fiber.Ctx) error {
-	signUpModel := UserSignUpModel()
-	err := c.BodyParser(signUpModel)
+	signUpForm := getUserSignUpModel()
+	err := c.BodyParser(signUpForm)
 	utils.HandleErr(err)
-	// 1.
-	if isMember(signUpModel.Email) {
+
+	if isMember(signUpForm.Email) {
 		return c.JSON(&errorMessage{errEmailAlreadyExists.Error()})
 	}
-	// 2.
-	if signUpModel.Password != signUpModel.Repeat {
+	if signUpForm.Password != signUpForm.Repeat {
 		return c.JSON(&errorMessage{errWrongPwRepeat.Error()})
 	}
-	// 3.
+
 	auth := &UserAuth{
 		User: User{
-			Email:    signUpModel.Email,
+			Email:    signUpForm.Email,
 			Nickname: initRandomNick(),
 		},
-		Password: utils.ToHash(utils.StrToByte(signUpModel.Password)),
+		Password: utils.ToHash(signUpForm.Password),
 	}
 
 	dataBase.DB().Create(auth)
 	return c.JSON(auth.User)
 }
 
+// [POST] 유저로부터 로그인 신청을 받습니다.
+// 회원인지 여부와 암호를 확인합니다. 암호 확인 과정은 암호화를 거쳐 이루어집니다.
+// 회원 여부가 확인되면 JWT 토큰울 반환합니다.
 func login(c *fiber.Ctx) error {
 	db := dataBase.DB()
 	loginForm := &userLogInModel{}
@@ -59,23 +62,15 @@ func login(c *fiber.Ctx) error {
 
 	auth := &UserAuth{}
 	db.Joins("User", db.Where(&User{Email: loginForm.Email})).Find(auth)
-	if auth.Password != utils.ToHash(utils.StrToByte(loginForm.Password)) {
+
+	if !pwValidation(auth.Password, loginForm.Password) {
 		return c.JSON(&errorMessage{errWrongPw.Error()})
 	}
 
-	expire := time.Now().Add(time.Hour * 120).Unix()
-
-	claims := jwt.MapClaims{
-		"email": auth.User.Email,
-		"name":  auth.User.Nickname,
-		"exp":   expire,
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
-
-	t, err := token.SignedString(key.LoadKey())
-	utils.HandleErr(err)
-
-	return c.JSON(fiber.Map{"token": t})
+	return c.JSON(fiber.Map{
+		"greetings": fmt.Sprintf("%s님 안녕하세요", auth.User.Nickname),
+		"token":     key.GetJWT(auth.User.Email, auth.User.Nickname),
+	})
 }
 
 func isMember(email string) bool {
@@ -84,10 +79,6 @@ func isMember(email string) bool {
 	return tx.RowsAffected > 0
 }
 
-func initRandomNick() string {
-	seed := time.Now().UTC().UnixNano()
-	genName := namegenerator.NewNameGenerator(seed)
-
-	name := genName.Generate()
-	return name
+func pwValidation(answer string, query string) bool {
+	return answer == utils.ToHash(query)
 }

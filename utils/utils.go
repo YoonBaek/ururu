@@ -16,7 +16,8 @@ func HandleErr(err error) {
 	}
 }
 
-func ToHash(bytes []byte) string {
+func ToHash(toBeHashed string) string {
+	bytes := StrToByte(toBeHashed)
 	crypted := sha256.Sum256(bytes)
 	return fmt.Sprintf("%x", crypted)
 }
