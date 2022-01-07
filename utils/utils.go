@@ -6,6 +6,10 @@ import (
 	"log"
 )
 
+type ErrorMessage struct {
+	ErrorMessage string `json:"error_message"`
+}
+
 func StrToByte(message string) []byte {
 	return []byte(message)
 }
